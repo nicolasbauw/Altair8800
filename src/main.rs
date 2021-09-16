@@ -24,12 +24,13 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         c.execute();
         //if c.pc == 0xffff { break };
 
+        // key pressed ? control device sends (0), and the pressed key is sent by I/O device (1), that's an IN for the CPU
         match getch(&term) {
             Some(ch) => { c.bus.set_io_in(0, 0); c.bus.set_io_in(1, ch as u8) },
             _ => {}
             }
         
-
+        // Data sent to device 1 (OUT) ? we display it
         if c.bus.get_io_out(1).is_some() {
             let mut value = c.bus.get_io_out(1).unwrap();
             value = value & 0x7f;
