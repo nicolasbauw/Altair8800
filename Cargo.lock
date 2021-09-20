@@ -26,6 +26,8 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 [[package]]
 name = "intel8080"
 version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "410d019d512e344027674176292cd27f17f48ca4ea8866c2648894de62cad827"
 
 [[package]]
 name = "lazy_static"
