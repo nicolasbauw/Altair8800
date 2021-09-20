@@ -14,23 +14,24 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     let term = Term::stdout();
     let  a: Vec<String> = env::args().collect();
     let mut c = CPU::new();
+    
     // Loads assembled program into memory
     c.bus.load_bin(&a[1], 0x0)?;
 
     // Setting up Altair switches for 88-SIO (4K BASIC 3.2)
     c.bus.set_io_in(255, 0x00);
 
+    // Since the console crate read key function is blocking, we spawn a thread
     thread::spawn(move || {
-        loop {match getch(&term) {
+        loop {
+            match getch(&term) {
             Some(ch) => tx.send(ch).unwrap(),
             _ => {}
-        }}
-            
-        }
-    );
+            }
+        } 
+    });
 
     loop {
-        //c.debug = true;
         c.execute();
         if c.pc == 0xffff { break };
 
@@ -47,6 +48,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             if value >= 32 && value <=125 || value == '\n' as u8 {
                 print!("{}", value as char);
                 stdout().flush().unwrap();
+                // Clearing IO (in and out) to be ready for next key press
                 c.bus.clear_io_out();
                 c.bus.set_io_in(0, 1);
             }
