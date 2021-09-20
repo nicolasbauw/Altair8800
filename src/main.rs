@@ -1,4 +1,4 @@
-use std::{ env, error::Error, process, thread, sync::mpsc };
+use std::{ env, error::Error, process, thread, sync::mpsc, io::stdout, io::Write };
 use intel8080::*;
 use console::{Term, Key};
 
@@ -45,7 +45,8 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             let mut value = c.bus.get_io_out(1).unwrap();
             value = value & 0x7f;
             if value >= 32 && value <=125 || value == '\n' as u8 {
-                println!("{}", value as char);
+                print!("{}", value as char);
+                stdout().flush().unwrap();
                 c.bus.clear_io_out();
                 c.bus.set_io_in(0, 1);
             }
