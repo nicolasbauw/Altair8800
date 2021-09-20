@@ -1,4 +1,4 @@
-use std::{ env, error::Error, process };
+use std::{ env, error::Error, process, thread, sync::mpsc };
 use intel8080::*;
 use console::{Term, Key};
 
@@ -10,6 +10,7 @@ fn main() {
 }
 
 fn load_execute() -> Result<(), Box<dyn Error>> {
+    let (tx, rx) = mpsc::channel();
     let term = Term::stdout();
     let  a: Vec<String> = env::args().collect();
     let mut c = CPU::new();
@@ -19,24 +20,34 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     // Setting up Altair switches for 88-SIO (4K BASIC 3.2)
     c.bus.set_io_in(255, 0x00);
 
+    thread::spawn(move || {
+        loop {match getch(&term) {
+            Some(ch) => tx.send(ch).unwrap(),
+            _ => {}
+        }}
+            
+        }
+    );
+
     loop {
         //c.debug = true;
         c.execute();
-        //if c.pc == 0xffff { break };
+        if c.pc == 0xffff { break };
 
-        // key pressed ? control device sends (0), and the pressed key is sent by I/O device (1), that's an IN for the CPU
-        match getch(&term) {
-            Some(ch) => { c.bus.set_io_in(0, 0); c.bus.set_io_in(1, ch as u8) },
+        match rx.try_recv() {
+            // key pressed ? control device sends (0), and the pressed key is sent by I/O device (1), that's an IN for the CPU
+            Ok(ch) => { c.bus.set_io_in(0, 0); c.bus.set_io_in(1, ch as u8) },
             _ => {}
-            }
+        };
         
         // Data sent to device 1 (OUT) ? we display it
         if c.bus.get_io_out(1).is_some() {
             let mut value = c.bus.get_io_out(1).unwrap();
             value = value & 0x7f;
             if value >= 32 && value <=125 || value == '\n' as u8 {
-                print!("{}", value as char);
+                println!("{}", value as char);
                 c.bus.clear_io_out();
+                c.bus.set_io_in(0, 1);
             }
         }
     }
