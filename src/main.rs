@@ -61,6 +61,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
 fn getch(term: &console::Term) -> Option<char> {
     match term.read_key().unwrap() {
         Key::Char(c) => Some(c),
+        Key::Enter => Some('\n'),
         _ => None
     }
 }
