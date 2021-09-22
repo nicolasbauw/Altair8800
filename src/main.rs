@@ -24,9 +24,8 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     // Since the console crate read key function is blocking, we spawn a thread
     thread::spawn(move || {
         loop {
-            match getch(&term) {
-            Some(ch) => tx.send(ch).unwrap(),
-            _ => {}
+            if let Some(ch) = getch(&term) {
+                tx.send(ch).unwrap()
             }
         } 
     });
@@ -35,11 +34,11 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         c.execute();
         if c.pc == 0xffff { break };
 
-        match rx.try_recv() {
-            // key pressed ? control device sends (0), and the pressed key is sent by I/O device (1), that's an IN for the CPU
-            Ok(ch) => { c.bus.set_io_in(0, 0); c.bus.set_io_in(1, ch as u8) },
-            _ => {}
-        };
+        if let Ok(ch) = rx.try_recv() {
+            c.bus.set_io_in(0, 0);
+            c.bus.set_io_in(1, ch as u8);
+        }
+    
         
         // Data sent to device 1 (OUT) ? we display it
         if c.bus.get_io_out(1).is_some() {
@@ -54,7 +53,6 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             }
         }
     }
-    
     Ok(())
 }
 
