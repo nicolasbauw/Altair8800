@@ -45,7 +45,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         if c.bus.get_io_out(1).is_some() {
             let mut value = c.bus.get_io_out(1).unwrap();
             value = value & 0x7f;
-            if value >= 32 && value <=125 || value == '\n' as u8 {
+            if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
                 print!("{}", value as char);
                 stdout().flush().unwrap();
                 // Clearing IO (in and out) to be ready for next key press
@@ -61,7 +61,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
 fn getch(term: &console::Term) -> Option<char> {
     match term.read_key().unwrap() {
         Key::Char(c) => Some(c),
-        Key::Enter => Some('\n'),
+        Key::Enter => Some(0x0d as char),
         _ => None
     }
 }
