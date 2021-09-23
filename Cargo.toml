@@ -1,6 +1,6 @@
 [package]
 name = "teletype"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2018"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 description = "Teletype emulator for my 8080 emulator (88-SIO)"
@@ -13,5 +13,5 @@ readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-intel8080 = "0.7.0"
+intel8080 = "0.8.0"
 console = "0.14.1"

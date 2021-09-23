@@ -25,9 +25,9 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
 name = "intel8080"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "410d019d512e344027674176292cd27f17f48ca4ea8866c2648894de62cad827"
+checksum = "87da3b35d11737c04f71e347960fc162f93175a0ffada50747ceaeae31118378"
 
 [[package]]
 name = "lazy_static"
@@ -58,7 +58,7 @@ checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
 
 [[package]]
 name = "teletype"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "console",
  "intel8080",
