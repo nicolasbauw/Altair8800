@@ -44,7 +44,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         let value = c.bus.get_io_out(1);
         if let Some(v) = value {
             let value = v & 0x7f;
-            if value >= 32 && v <=125 || value == 0x0a || value == 0x0d {
+            if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
                 print!("{}", value as char);
                 stdout().flush().unwrap();
                 // Clearing IO (in and out) to be ready for next key press
