@@ -41,8 +41,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     
         
         // Data sent to device 1 (OUT) ? we display it
-        let value = c.bus.get_io_out(1);
-        if let Some(v) = value {
+        if let Some(v) = c.bus.get_io_out(1) {
             let value = v & 0x7f;
             if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
                 print!("{}", value as char);
