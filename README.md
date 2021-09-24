@@ -16,4 +16,9 @@ or
 ./teletype teletype_echo.bin
 ```
 
+to run Basic 3.2 :
+```
+./teletype 4kbas32.bin
+```
+
 It has been tested with the echo test routine and the altair basic 3.2.
