@@ -12,11 +12,16 @@ fn main() {
 fn load_execute() -> Result<(), Box<dyn Error>> {
     let (tx, rx) = mpsc::channel();
     let term = Term::stdout();
-    let  a: Vec<String> = env::args().collect();
+    let  mut a = env::args();
     let mut c = CPU::new();
     
     // Loads assembled program into memory
-    c.bus.load_bin(&a[1], 0x0)?;
+    if let Some(f) = a.nth(1) {
+        c.bus.load_bin(&f, 0x0)?;
+    } else {
+        println!("No file specified");
+        process::exit(1);
+    }
 
     // Setting up Altair switches for 88-SIO (4K BASIC 3.2)
     c.bus.set_io_in(255, 0x00);
