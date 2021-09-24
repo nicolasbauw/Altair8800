@@ -6,18 +6,30 @@
 This is a teletype emulator, written for my [8080 emulator](https://crates.io/crates/intel8080).
 It emulates a teletype interfaced on a 88-SIO board (MITS/Altair)
 
+To install:
 ```text
-cargo run -- bin/teletype_echo.bin
+cargo install teletype
 ```
 
-or
+You can run an altair binary, for example Basic 3.2 :
 ```
-./teletype teletype_echo.bin
-```
-
-to run Basic 3.2 :
-```
-./teletype 4kbas32.bin
+teletype 4kbas32.bin
 ```
 
-It has been tested with the echo test routine and the altair basic 3.2.
+It has been tested with the echo test routine and the Altair basic 3.2:
+```
+❯ teletype ~/Dev/4kbas32.bin 
+
+MEMORY SIZE? 8192
+TERMINAL WIDTH? 
+WANT SIN? N
+WANT RND? N
+WANT SQR? N
+
+5068 BYTES FREE
+
+BASIC VERSION 3.2
+[4K VERSION]
+
+OK
+```
