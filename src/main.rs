@@ -64,37 +64,40 @@ fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
         Ok(k) => match k {
             Key::Char(c) => Some(c as u8),
             Key::Enter => Some(0x0d),
-            Key::Escape => { toggle_menu(term, tx); return None },
+            Key::Escape => {
+                if let Err(e) = toggle_menu(term, tx) { println!("{}", e) };
+                return None
+            },
             _ => None
         },
         Err(_) => None
     }
 }
 
-fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) {
+fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result<(), Box<dyn Error>> {
     //term.hide_cursor().unwrap();
     let delay = time::Duration::from_millis(50);
-    term.move_cursor_to(0, 0).unwrap();
+    term.move_cursor_to(0, 0)?;
     term.clear_screen().unwrap();
     println!("{}uit\t{}oad\t{}ave", style("[Q]").magenta(), style("[L]").magenta(), style("[S]").magenta());
     loop {
-        match term.read_key().unwrap() {
-            Key::Escape => { term.clear_screen().unwrap(); return },
+        match term.read_key()? {
+            Key::Escape => { term.clear_screen().unwrap(); return Ok(())},
             Key::Char('Q') => { process::exit(0) },
             Key::Char('L') => {
-                term.clear_screen().unwrap();
-                term.write_line("File ? ").unwrap();
-                let file = term.read_line().unwrap();
-                let bas = fs::read_to_string(file).unwrap();
+                term.clear_screen()?;
+                term.write_line("File ? ")?;
+                let file = term.read_line()?;
+                let bas = fs::read_to_string(file)?;
                 for line in bas.lines() {
                     for c in line.chars() {
-                        tx.send(c as u8).unwrap();
+                        tx.send(c as u8)?;
                         thread::sleep(delay);
                     }
-                    tx.send(0x0d).unwrap();
+                    tx.send(0x0d)?;
                     thread::sleep(delay);
                 }
-                return;
+                return Ok(());
             }
             _ => {}
         }
