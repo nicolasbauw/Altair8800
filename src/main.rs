@@ -79,7 +79,7 @@ fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result
     let delay = time::Duration::from_millis(50);
     term.move_cursor_to(0, 0)?;
     term.clear_screen().unwrap();
-    println!("{}uit\t{}oad\t{}ave", style("[Q]").magenta(), style("[L]").magenta(), style("[S]").magenta());
+    println!("{}uit\t{}oad", style("[Q]").magenta(), style("[L]").magenta());
     loop {
         match term.read_key()? {
             Key::Escape => { term.clear_screen().unwrap(); return Ok(())},
