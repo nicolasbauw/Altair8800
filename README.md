@@ -35,6 +35,6 @@ OK
 ```
 The escape key opens a menu, from which you can:
 - Quit the emulator without having to press CTRL-C
-- Load a file from you disk. This "injects" the text of the file into the teletype and is very convenient to load a BASIC program, since BASIC 3.2 does not provide disk operation commands.
+- Load a file from your disk. This "injects" the text of the file into the teletype and is very convenient to load a BASIC program, since BASIC 3.2 does not provide disk operation commands.
 
 Pressing ESC a second time quits the menu.
