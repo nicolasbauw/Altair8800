@@ -36,11 +36,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     });
 
     loop {
-        #[cfg(windows)]
-        spin_sleep::sleep(time::Duration::from_nanos((c.execute() as u64) * 500));
-
-        #[cfg(not(windows))]
-        thread::sleep(time::Duration::from_nanos((c.execute() as u64) * 500));
+        c.execute_slice();
         if c.pc == 0xffff { break };
 
         if let Ok(ch) = rx.try_recv() {
