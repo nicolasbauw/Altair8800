@@ -1,4 +1,4 @@
-use std::{ env, error::Error, process, thread, sync::mpsc, io::stdout, io::Write, fs, time };
+use std::{ env, error::Error, process, thread, sync::mpsc, io::stdout, io::Write, fs };
 use intel8080::*;
 use console::{Term, Key, style};
 
@@ -75,8 +75,6 @@ fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
 }
 
 fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result<(), Box<dyn Error>> {
-    //term.hide_cursor().unwrap();
-    let delay = time::Duration::from_millis(50);
     term.move_cursor_to(0, 0)?;
     term.clear_screen().unwrap();
     println!("{}uit\t{}oad", style("[Q]").magenta(), style("[L]").magenta());
@@ -92,10 +90,8 @@ fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result
                 for line in bas.lines() {
                     for c in line.chars() {
                         tx.send(c as u8)?;
-                        thread::sleep(delay);
                     }
                     tx.send(0x0d)?;
-                    thread::sleep(delay);
                 }
                 return Ok(());
             }
