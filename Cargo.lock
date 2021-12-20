@@ -25,9 +25,9 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
 name = "intel8080"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c81b8734264e87148a05dcfe588fe322a9e11237ef13f8efdf856ad2b95eb17"
+checksum = "6fbabd1d594ea4b315fdec80128eab76da419475481e69225ba2abb2517ba51a"
 dependencies = [
  "spin_sleep",
 ]
@@ -77,7 +77,7 @@ dependencies = [
 
 [[package]]
 name = "teletype"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "console",
  "intel8080",

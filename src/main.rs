@@ -1,5 +1,5 @@
 use std::{ env, error::Error, process, thread, sync::mpsc, io::stdout, io::Write, fs, time };
-use intel8080::*;
+use intel8080::{CPU, memory::ROMSpace};
 use console::{Term, Key, style};
 
 fn main() {
@@ -14,6 +14,9 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     let term = Term::stdout();
     let  mut a = env::args();
     let mut c = CPU::new();
+    /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
+    otherwise automatic RAM detection routine loops forever */
+    c.bus.rom_space = Some(ROMSpace{start: 0xffff, end: 0xffff});
 
     // Loads assembled program into memory
     if let Some(f) = a.nth(1) {
@@ -37,7 +40,9 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
 
     loop {
         c.execute_slice();
-        if c.pc == 0xffff { break };
+
+        // Will likely never happen. There just to meet function return type requirement.
+        if c.pc == 0xffff { return Ok(()) };
 
         if let Ok(ch) = rx.try_recv() {
             c.bus.set_io_in(0, 0);
@@ -56,7 +61,6 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             }
         }
     }
-    Ok(())
 }
 
 fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
@@ -97,6 +101,9 @@ fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result
                     thread::sleep(delay*10);
                 }
                 return Ok(());
+            }
+            Key::Char('C') => {
+                tx.send(0x03)?;
             }
             _ => {}
         }
