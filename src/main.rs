@@ -17,6 +17,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
     c.bus.rom_space = Some(ROMSpace{start: 0xffff, end: 0xffff});
+    c.callback = out_callback;
 
     // Loads assembled program into memory
     if let Some(f) = a.nth(1) {
@@ -47,18 +48,6 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         if let Ok(ch) = rx.try_recv() {
             c.bus.set_io_in(0, 0);
             c.bus.set_io_in(1, ch);
-        }
-    
-        // Data sent to device 1 (OUT) ? we display it
-        if let Some(v) = c.bus.get_io_out(1) {
-            let value = v & 0x7f;
-            if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
-                print!("{}", value as char);
-                stdout().flush()?;
-                // Clearing IO (in and out) to be ready for next key press
-                c.bus.clear_io_out();
-                c.bus.set_io_in(0, 1);
-            }
         }
     }
 }
@@ -106,6 +95,19 @@ fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result
                 tx.send(0x03)?;
             }
             _ => {}
+        }
+    }
+}
+
+fn out_callback(c: &mut CPU, device: u8, data: u8) {
+    // Data sent to device 1 (OUT) ? we display it
+    if device == 1 {
+        let value = data & 0x7f;
+        if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
+            print!("{}", value as char);
+            stdout().flush().unwrap();
+            // Clearing IO in to be ready for next key press
+            c.bus.set_io_in(0, 1);
         }
     }
 }
