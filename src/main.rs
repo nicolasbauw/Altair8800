@@ -17,7 +17,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
     c.bus.rom_space = Some(ROMSpace{start: 0xffff, end: 0xffff});
-    c.callback = out_callback;
+    c.set_cb_out(out_callback);
 
     // Loads assembled program into memory
     if let Some(f) = a.nth(1) {
