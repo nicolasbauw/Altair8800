@@ -105,7 +105,7 @@ fn out_callback(c: &mut CPU, device: u8, data: u8) -> Option<u8> {
         let value = data & 0x7f;
         if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
             print!("{}", value as char);
-            stdout().flush().unwrap();
+            stdout().flush().ok();
             // Clearing IO in to be ready for next key press
             c.bus.set_io_in(0, 1);
         }
