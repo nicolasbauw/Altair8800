@@ -99,7 +99,7 @@ fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result
     }
 }
 
-fn out_callback(c: &mut CPU, device: u8, data: u8) {
+fn out_callback(c: &mut CPU, device: u8, data: u8) -> Option<u8> {
     // Data sent to device 1 (OUT) ? we display it
     if device == 1 {
         let value = data & 0x7f;
@@ -110,4 +110,5 @@ fn out_callback(c: &mut CPU, device: u8, data: u8) {
             c.bus.set_io_in(0, 1);
         }
     }
+    None
 }
