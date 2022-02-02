@@ -1,6 +1,14 @@
 # Changelog
 
-### 0.6.0
+### 0.9.0
+
+- Using callback for OUT
+
+### 0.8.0
+
+- Fix for Basic 3.2 autodetection routine
+
+### 0.7.0
 
 - fixed the high CPU usage
 
