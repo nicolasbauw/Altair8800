@@ -68,7 +68,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         }
     });
 
-    // Thread for device 1
+    // Device 1 : send and receive ASCII data from the teletype
     thread::spawn(move || {
         // Device 1 received data ? Let's print it
         loop {
@@ -84,7 +84,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         }
     });
 
-    // Device 255 (Altair switches)
+    // Device 255 : Altair switches
     thread::spawn(move || {
         if let Ok(device) = altair_switches_req_receiver.recv() {
             if device == 255 {
@@ -102,6 +102,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         } 
     });
 
+    // CPU loop
     loop {
         c.execute_slice();
     }
