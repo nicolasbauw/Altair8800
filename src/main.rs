@@ -34,6 +34,9 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     let device0_sender = c.bus.io_in.0.clone();
     //let device0_sender1 = c.bus.io_in.0.clone();
 
+    let altair_switches_req_receiver = c.bus.io_req.1.clone();
+    let altair_switches_sender = c.bus.io_in.0.clone();
+
     let device1_sender = c.bus.io_in.0.clone();
     let device1_receiver = c.bus.io_out.1.clone();
 
@@ -77,6 +80,15 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
                         stdout().flush().unwrap();
                     }
                 }
+            }
+        }
+    });
+
+    // Device 255 (Altair switches)
+    thread::spawn(move || {
+        if let Ok(device) = altair_switches_req_receiver.recv() {
+            if device == 255 {
+                altair_switches_sender.send((255, 0)).unwrap();
             }
         }
     });
