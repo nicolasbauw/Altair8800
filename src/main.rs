@@ -1,4 +1,4 @@
-use std::{ env, error::Error, process, thread, time ,time::Duration};
+use std::{ env, error::Error, process, thread, time ,time::Duration, io::Write, io::stdout};
 use zilog_z80::cpu::CPU;
 use console::{Term, Key};
 
@@ -70,7 +70,13 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         // Device 1 received data ? Let's print it
         loop {
             if let Ok((device, data)) = device1_receiver.recv() {
-                if device == 1 { println!("{}", data) }
+                if device == 1 {
+                    let value = data & 0x7f;
+                    if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
+                        print!("{}", value as char);
+                        stdout().flush().unwrap();
+                    }
+                }
             }
         }
     });
