@@ -1,6 +1,6 @@
-use std::{ env, error::Error, process, thread, sync::mpsc, io::stdout, io::Write, fs, time };
-use intel8080::{CPU, memory::ROMSpace};
-use console::{Term, Key, style};
+use std::{ env, error::Error, process, thread, time ,time::Duration};
+use zilog_z80::cpu::CPU;
+use console::{Term, Key};
 
 fn main() {
     if let Err(e) = load_execute() {
@@ -10,13 +10,16 @@ fn main() {
 }
 
 fn load_execute() -> Result<(), Box<dyn Error>> {
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = zilog_z80::crossbeam_channel::bounded::<u8>(1);
     let term = Term::stdout();
     let  mut a = env::args();
-    let mut c = CPU::new();
+    let mut c = CPU::new(0xFFFF);
+    c.set_freq(0.0000000250);
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
-    c.bus.rom_space = Some(ROMSpace{start: 0xffff, end: 0xffff});
+    c.bus.set_romspace(0xffff, 0xffff);
+    //c.debug.io = true;
+    //c.debug.instr_in = true;
 
     // Loads assembled program into memory
     if let Some(f) = a.nth(1) {
@@ -26,13 +29,56 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
         process::exit(1);
     }
 
+    let device0_req_receiver = c.bus.io_req.1.clone();
+    //let device0_req_receiver2 = c.bus.io_req.1.clone();
+    let device0_sender = c.bus.io_in.0.clone();
+    //let device0_sender1 = c.bus.io_in.0.clone();
+
+    let device1_sender = c.bus.io_in.0.clone();
+    let device1_receiver = c.bus.io_out.1.clone();
+
     // Setting up Altair switches for 88-SIO (4K BASIC 3.2)
-    c.bus.set_io_in(255, 0x00);
+    //c.bus.set_io_in(255, 0x00);
+
+    // Device 0 : teletype control channel
+    thread::spawn(move || {
+        loop {
+            // CPU ran an IN instruction ?
+            if let Ok(device) = device0_req_receiver.recv() {
+                // IN for device 0 ?
+                if device == 0 {
+                    // As a key has been pressed, we send 0 (output device ready) to device 0
+                    match rx.try_recv() {
+                        Err(_) => {
+                            device0_sender.send((0,1)).unwrap();
+                            //println!("No key pressed, device 0 sends 1");
+                        },
+                        Ok(ch) => {
+                            device0_sender.send((0,0)).unwrap();
+                            device1_sender.send((1,ch)).unwrap();
+                            //println!("Key pressed, device 0 sends 0");
+                        }
+                    }
+                    
+                }
+            }
+        }
+    });
+
+    // Thread for device 1
+    thread::spawn(move || {
+        // Device 1 received data ? Let's print it
+        loop {
+            if let Ok((device, data)) = device1_receiver.recv() {
+                if device == 1 { println!("{}", data) }
+            }
+        }
+    });
 
     // Since the console crate read key function is blocking, we spawn a thread
     thread::spawn(move || {
         loop {
-            if let Some(ch) = getch(&term, &tx) {
+            if let Some(ch) = getch(&term) {
                 tx.send(ch).unwrap()
             }
         } 
@@ -40,72 +86,17 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
 
     loop {
         c.execute_slice();
-
-        // Will likely never happen. There just to meet function return type requirement.
-        if c.pc == 0xffff { return Ok(()) };
-
-        if let Ok(ch) = rx.try_recv() {
-            c.bus.set_io_in(0, 0);
-            c.bus.set_io_in(1, ch);
-        }
-    
-        // Data sent to device 1 (OUT) ? we display it
-        if let Some(v) = c.bus.get_io_out(1) {
-            let value = v & 0x7f;
-            if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
-                print!("{}", value as char);
-                stdout().flush()?;
-                // Clearing IO (in and out) to be ready for next key press
-                c.bus.clear_io_out();
-                c.bus.set_io_in(0, 1);
-            }
-        }
     }
+
 }
 
-fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
+fn getch(term: &console::Term) -> Option<u8> {
     match term.read_key() {
         Ok(k) => match k {
             Key::Char(c) => Some(c as u8),
             Key::Enter => Some(0x0d),
-            Key::Escape => {
-                if let Err(e) = toggle_menu(term, tx) { println!("{}", e) };
-                return None
-            },
             _ => None
         },
         Err(_) => None
-    }
-}
-
-fn toggle_menu(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Result<(), Box<dyn Error>> {
-    let delay = time::Duration::from_millis(20);
-    term.move_cursor_to(0, 0)?;
-    term.clear_screen().unwrap();
-    println!("{}uit\t{}oad", style("[Q]").magenta(), style("[L]").magenta());
-    loop {
-        match term.read_key()? {
-            Key::Escape => { term.clear_screen().unwrap(); return Ok(())},
-            Key::Char('Q') => { process::exit(0) },
-            Key::Char('L') => {
-                term.clear_screen()?;
-                term.write_line("File ? ")?;
-                let file = term.read_line()?;
-                let bas = fs::read_to_string(file)?;
-                for line in bas.lines() {
-                    for c in line.chars() {
-                        tx.send(c as u8)?;
-                        thread::sleep(delay);
-                    }
-                    tx.send(0x0d)?;
-                    thread::sleep(delay*10);
-                }
-                return Ok(());
-            }
-            Key::Char('C') => {
-                tx.send(0x03)?;
-            }
-            _ => {}
-        }
     }
 }
