@@ -14,7 +14,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     let term = Term::stdout();
     let  mut a = env::args();
     let mut c = CPU::new(0xFFFF);
-    c.set_freq(0.0000000250);
+    //c.set_freq(0.0000000250);
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
     c.bus.set_romspace(0xffff, 0xffff);
