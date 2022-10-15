@@ -50,6 +50,8 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 [[package]]
 name = "intel8080"
 version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0b5960e7de6af78914b1780a54d6602193c43fc626b6a26893f8231633be79f"
 dependencies = [
  "crossbeam-channel",
  "spin_sleep",
