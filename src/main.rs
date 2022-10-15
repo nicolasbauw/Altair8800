@@ -1,5 +1,5 @@
 use std::{ env, error::Error, process, thread, time ,time::Duration, io::Write, io::stdout};
-use zilog_z80::cpu::CPU;
+use intel8080::CPU;
 use console::{Term, Key};
 
 fn main() {
@@ -10,10 +10,10 @@ fn main() {
 }
 
 fn load_execute() -> Result<(), Box<dyn Error>> {
-    let (tx, rx) = zilog_z80::crossbeam_channel::bounded::<u8>(1);
+    let (tx, rx) = intel8080::crossbeam_channel::bounded::<u8>(1);
     let term = Term::stdout();
     let  mut a = env::args();
-    let mut c = CPU::new(0xFFFF);
+    let mut c = CPU::new();
 
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
