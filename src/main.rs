@@ -50,12 +50,14 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             if let Ok(device) = device0_req_receiver.recv() {
                 // IN for device 0 ?
                 if device == 0 {
-                    // As a key has been pressed, we send 0 (output device ready) to device 0
+                    // No key has been pressed ? we send 1 to device 0
                     match rx.try_recv() {
                         Err(_) => {
                             device0_sender.send((0,1)).unwrap();
                             //println!("No key pressed, device 0 sends 1");
                         },
+                        // A key has been pressed ? we send 0 (output device ready) to device 0
+                        // Then, we send the key code to device 1
                         Ok(ch) => {
                             device0_sender.send((0,0)).unwrap();
                             device1_sender.send((1,ch)).unwrap();
