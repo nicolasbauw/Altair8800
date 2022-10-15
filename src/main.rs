@@ -14,12 +14,10 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     let term = Term::stdout();
     let  mut a = env::args();
     let mut c = CPU::new(0xFFFF);
-    //c.set_freq(0.0000000250);
+
     /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
     otherwise automatic RAM detection routine loops forever */
     c.bus.set_romspace(0xffff, 0xffff);
-    //c.debug.io = true;
-    //c.debug.instr_in = true;
 
     // Loads assembled program into memory
     if let Some(f) = a.nth(1) {
@@ -30,18 +28,13 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     }
 
     let device0_req_receiver = c.bus.io_req.1.clone();
-    //let device0_req_receiver2 = c.bus.io_req.1.clone();
     let device0_sender = c.bus.io_in.0.clone();
-    //let device0_sender1 = c.bus.io_in.0.clone();
 
     let altair_switches_req_receiver = c.bus.io_req.1.clone();
     let altair_switches_sender = c.bus.io_in.0.clone();
 
     let device1_sender = c.bus.io_in.0.clone();
     let device1_receiver = c.bus.io_out.1.clone();
-
-    // Setting up Altair switches for 88-SIO (4K BASIC 3.2)
-    //c.bus.set_io_in(255, 0x00);
 
     // Device 0 : teletype control channel
     thread::spawn(move || {
@@ -54,14 +47,12 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
                     match rx.try_recv() {
                         Err(_) => {
                             device0_sender.send((0,1)).unwrap();
-                            //println!("No key pressed, device 0 sends 1");
                         },
                         // A key has been pressed ? we send 0 (output device ready) to device 0
                         // Then, we send the key code to device 1
                         Ok(ch) => {
                             device0_sender.send((0,0)).unwrap();
                             device1_sender.send((1,ch)).unwrap();
-                            //println!("Key pressed, device 0 sends 0");
                         }
                     }
                     
@@ -72,9 +63,9 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
 
     // Device 1 : send and receive ASCII data from the teletype
     thread::spawn(move || {
-        // Device 1 received data ? Let's print it
         loop {
             if let Ok((device, data)) = device1_receiver.recv() {
+                // Device 1 received data ? Let's print it
                 if device == 1 {
                     let value = data & 0x7f;
                     if value >= 32 && value <=125 || value == 0x0a || value == 0x0d {
