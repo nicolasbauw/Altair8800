@@ -43,8 +43,8 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
             if let Ok(device) = device0_req_receiver.recv() {
                 // IN for device 0 ?
                 if device == 0 {
-                    // No key has been pressed ? we send 1 to device 0
                     match rx.try_recv() {
+                        // No key has been pressed ? we send 1 to device 0
                         Err(_) => {
                             device0_sender.send((0,1)).unwrap();
                         },
@@ -55,7 +55,6 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
                             device1_sender.send((1,ch)).unwrap();
                         }
                     }
-                    
                 }
             }
         }
