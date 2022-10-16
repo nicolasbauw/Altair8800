@@ -44,12 +44,12 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
                 // IN for device 0 ?
                 if device == 0 {
                     match rx.try_recv() {
-                        // No key has been pressed ? we send 1 to device 0
+                        // No key have been pressed ? device 0 sends 1
                         Err(_) => {
                             device0_sender.send((0,1)).unwrap();
                         },
-                        // A key has been pressed ? we send 0 (output device ready) to device 0
-                        // Then, we send the key code to device 1
+                        // A key has been pressed ? device 0 sends 0 (output device ready)
+                        // Then, device 1 sends the key code
                         Ok(ch) => {
                             device0_sender.send((0,0)).unwrap();
                             device1_sender.send((1,ch)).unwrap();
@@ -80,6 +80,7 @@ fn load_execute() -> Result<(), Box<dyn Error>> {
     thread::spawn(move || {
         if let Ok(device) = altair_switches_req_receiver.recv() {
             if device == 255 {
+                // All switches down : that's the 88-SIO setting for MS Basic 3.2
                 altair_switches_sender.send((255, 0)).unwrap();
             }
         }
