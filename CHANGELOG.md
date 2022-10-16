@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.10.0
+
+- Using channels for IO (intel8080 0.15.0)
+
 ### 0.6.0
 
 - fixed the high CPU usage
