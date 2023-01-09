@@ -118,7 +118,7 @@ fn getch(term: &console::Term, tx: &intel8080::crossbeam_channel::Sender<u8>) ->
 }
 
 fn toggle_menu(term: &console::Term, tx: &intel8080::crossbeam_channel::Sender<u8>) -> Result<(), Box<dyn Error>> {
-    let delay = time::Duration::from_millis(20);
+    let delay = time::Duration::from_millis(25);
     term.move_cursor_to(0, 0)?;
     term.clear_screen().unwrap();
     println!("{}uit\t{}oad", style("[Q]").magenta(), style("[L]").magenta());
