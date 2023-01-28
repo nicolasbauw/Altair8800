@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, error::Error};
 use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -12,7 +12,7 @@ pub struct KeyboardConfig {
     pub line_delay: u64,
 }
 
-pub fn load_config_file() -> Result<Config, std::io::Error> {
+pub fn load_config_file() -> Result<Config, Box<dyn Error>> {
     let f = "config/config.toml";
     let buf = fs::read_to_string(f)?;
     let config: Config = toml::from_str(&buf)?;

@@ -15,6 +15,6 @@ readme = "README.md"
 [dependencies]
 intel8080 = "0.15.0"
 console = "0.15.2"
-toml = "0.5.9"
+toml = "0.7.0"
 serde = "1.0.152"
 serde_derive = "1.0.152"
