@@ -1,6 +1,6 @@
 [package]
 name = "teletype"
-version = "0.10.0"
+version = "0.11.0"
 edition = "2021"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 description = "Teletype emulator (via 88-SIO board) for my 8080 emulator"
@@ -15,3 +15,6 @@ readme = "README.md"
 [dependencies]
 intel8080 = "0.15.0"
 console = "0.15.2"
+toml = "0.5.9"
+serde = "1.0.152"
+serde_derive = "1.0.152"

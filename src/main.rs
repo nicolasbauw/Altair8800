@@ -2,6 +2,8 @@ use std::{ env, error::Error, process, thread, time, io::Write, io::stdout, fs};
 use intel8080::CPU;
 use console::{Term, Key, style};
 
+mod config;
+
 fn main() {
     if let Err(e) = load_execute() {
         println!("{}", e);
@@ -118,7 +120,7 @@ fn getch(term: &console::Term, tx: &intel8080::crossbeam_channel::Sender<u8>) ->
 }
 
 fn toggle_menu(term: &console::Term, tx: &intel8080::crossbeam_channel::Sender<u8>) -> Result<(), Box<dyn Error>> {
-    let delay = time::Duration::from_millis(20);
+    let config = config::load_config_file()?;
     term.move_cursor_to(0, 0)?;
     term.clear_screen().unwrap();
     println!("{}uit\t{}oad", style("[Q]").magenta(), style("[L]").magenta());
@@ -134,10 +136,10 @@ fn toggle_menu(term: &console::Term, tx: &intel8080::crossbeam_channel::Sender<u
                 for line in bas.lines() {
                     for c in line.chars() {
                         tx.send(c as u8)?;
-                        thread::sleep(delay);
+                        thread::sleep(time::Duration::from_millis(config.keyboard.char_delay));
                     }
                     tx.send(0x0d)?;
-                    thread::sleep(delay*10);
+                    thread::sleep(time::Duration::from_millis(config.keyboard.line_delay));
                 }
                 return Ok(());
             }
