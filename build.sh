@@ -3,4 +3,5 @@
 cargo build --release --target=aarch64-apple-darwin
 cargo build --release --target=x86_64-apple-darwin
 lipo -create target/aarch64-apple-darwin/release/teletype target/x86_64-apple-darwin/release/teletype -output ./teletype
-zip -9 teletype_mac_os.zip teletype
+zip -9 teletype_mac_os.zip teletype .config .config/teletype .config/teletype/config.toml
+rm teletype
