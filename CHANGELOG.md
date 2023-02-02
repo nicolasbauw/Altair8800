@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.11.0
+
+- Character input and line validation delays moved in a config file
+- Build script installs config file in home directory
+
 ### 0.10.0
 
 - Using channels for IO (intel8080 0.15.0)
