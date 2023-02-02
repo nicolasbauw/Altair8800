@@ -7,8 +7,12 @@ fn main() {
         let mut dest = home_dir.to_path_buf();
         let options = fs_extra::dir::CopyOptions::new();
 
+        // Create .config directory in user's home directory
+        dest.push(".config/");
+        create(&dest, false).unwrap_or_default(); // Create error ? directory exists, so we don't care
+
         // Create teletype's config directory in user's home directory
-        dest.push(".config/teletype/");
+        dest.push("teletype/");
         create(&dest, true).unwrap();
 
         // Copy teletype/config.toml to home_dir/.config/teletype/config.toml
