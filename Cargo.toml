@@ -18,6 +18,8 @@ console = "0.15.2"
 toml = "0.7.0"
 serde = "1.0.152"
 serde_derive = "1.0.152"
+directories = "4.0"
+fs_extra = "1.2.0"
 
 [build-dependencies]
 directories = "4.0"
