@@ -1,8 +1,7 @@
-use crate::config;
-use console::{style, Key, Term};
+use console::Term;
 use intel8080::CPU;
 use std::{
-    env, error::Error, fs, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration,
+    env, error::Error, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration,
 };
 
 struct Teletype {
@@ -40,13 +39,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     // Since the console crate read key function is blocking, we spawn a thread
     thread::spawn(move || loop {
-        if let Some(ch) = getch(&term, &tx) {
+        if let Some(ch) = crate::console::getch(&term, &tx) {
             tx.send(ch).unwrap()
         }
     });
 
     loop {
-        // Checking data sent from the "teletype" thread
+        // Checking if data was sent from the "teletype" thread
         if let Ok(ch) = rx.try_recv() {
             // A key has been pressed ? device 0 sends 0 (output device ready)
             teletype.control = 0;
@@ -90,65 +89,6 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
         if let Some(t) = c.execute_timed() {
             thread::sleep(Duration::from_millis(t.into()))
-        }
-    }
-}
-
-fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
-    match term.read_key() {
-        Ok(k) => match k {
-            Key::Char(c) => Some(c as u8),
-            Key::Enter => Some(0x0d),
-            Key::Escape => {
-                if let Err(e) = toggle_menu(term, tx) {
-                    println!("{}", e)
-                };
-                return None;
-            }
-            _ => None,
-        },
-        Err(_) => None,
-    }
-}
-
-fn toggle_menu(
-    term: &console::Term,
-    tx: &std::sync::mpsc::Sender<u8>,
-) -> Result<(), Box<dyn Error>> {
-    let config = config::load_config_file()?;
-    term.move_cursor_to(0, 0)?;
-    term.clear_screen().unwrap();
-    println!(
-        "{}uit\t{}oad",
-        style("[Q]").magenta(),
-        style("[L]").magenta()
-    );
-    loop {
-        match term.read_key()? {
-            Key::Escape => {
-                term.clear_screen().unwrap();
-                return Ok(());
-            }
-            Key::Char('Q') => process::exit(0),
-            Key::Char('L') => {
-                term.clear_screen()?;
-                term.write_line("File ? ")?;
-                let file = term.read_line()?;
-                let bas = fs::read_to_string(file)?;
-                for line in bas.lines() {
-                    for c in line.chars() {
-                        tx.send(c as u8)?;
-                        thread::sleep(std::time::Duration::from_millis(config.keyboard.char_delay));
-                    }
-                    tx.send(0x0d)?;
-                    thread::sleep(std::time::Duration::from_millis(config.keyboard.line_delay));
-                }
-                return Ok(());
-            }
-            Key::Char('C') => {
-                tx.send(0x03)?;
-            }
-            _ => {}
         }
     }
 }

@@ -1,6 +1,7 @@
 use std::process;
 
-pub mod config;
+mod config;
+mod console;
 mod teletype;
 
 fn main() {
