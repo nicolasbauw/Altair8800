@@ -3,6 +3,19 @@
 version = 3
 
 [[package]]
+name = "altair"
+version = "0.13.0"
+dependencies = [
+ "console",
+ "directories",
+ "fs_extra",
+ "intel8080",
+ "serde",
+ "serde_derive",
+ "toml",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -95,12 +108,7 @@ dependencies = [
 
 [[package]]
 name = "intel8080"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fbabd1d594ea4b315fdec80128eab76da419475481e69225ba2abb2517ba51a"
-dependencies = [
- "spin_sleep",
-]
+version = "0.17.0"
 
 [[package]]
 name = "lazy_static"
@@ -128,12 +136,6 @@ checksum = "ae01545c9c7fc4486ab7debaf2aad7003ac19431791868fb2e8066df97fad2f8"
 dependencies = [
  "memchr",
 ]
-
-[[package]]
-name = "once_cell"
-version = "1.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "692fcb63b64b1758029e0a96ee63e049ce8c5948587f2f7208df04625e5f6b56"
 
 [[package]]
 name = "proc-macro2"
@@ -200,16 +202,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "spin_sleep"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a98101bdc3833e192713c2af0b0dd2614f50d1cf1f7a97c5221b7aac052acc7"
-dependencies = [
- "once_cell",
- "winapi",
-]
-
-[[package]]
 name = "syn"
 version = "1.0.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -218,19 +210,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "teletype"
-version = "0.12.0"
-dependencies = [
- "console",
- "directories",
- "fs_extra",
- "intel8080",
- "serde",
- "serde_derive",
- "toml",
 ]
 
 [[package]]
