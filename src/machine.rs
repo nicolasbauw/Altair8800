@@ -4,20 +4,6 @@ use std::{
     env, error::Error, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration,
 };
 
-struct Teletype {
-    control: u8, // Device 0
-    data: u8,    // Device 1
-}
-
-impl Teletype {
-    fn new() -> Self {
-        Self {
-            control: 0,
-            data: 0,
-        }
-    }
-}
-
 pub fn run() -> Result<(), Box<dyn Error>> {
     let (tx, rx) = mpsc::channel();
     let term = Term::stdout();
@@ -35,11 +21,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         process::exit(1);
     }
 
-    let mut teletype = Teletype::new();
+    let mut teletype = crate::teletype::Teletype::new();
 
     // Since the console crate read key function is blocking, we spawn a thread
     thread::spawn(move || loop {
-        if let Some(ch) = crate::console::getch(&term, &tx) {
+        if let Some(ch) = crate::teletype::getch(&term, &tx) {
             tx.send(ch).unwrap()
         }
     });

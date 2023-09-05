@@ -4,6 +4,20 @@ use std::{
     error::Error, fs, process, thread,
 };
 
+pub struct Teletype {
+    pub control: u8, // Device 0
+    pub data: u8,    // Device 1
+}
+
+impl Teletype {
+    pub fn new() -> Self {
+        Self {
+            control: 0,
+            data: 0,
+        }
+    }
+}
+
 pub fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
     match term.read_key() {
         Ok(k) => match k {

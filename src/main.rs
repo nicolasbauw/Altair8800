@@ -1,11 +1,11 @@
 use std::process;
 
 mod config;
-mod console;
+mod machine;
 mod teletype;
 
 fn main() {
-    if let Err(e) = teletype::run() {
+    if let Err(e) = machine::run() {
         println!("{}", e);
         process::exit(1);
     }
