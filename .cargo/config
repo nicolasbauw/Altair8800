@@ -1,0 +1,4 @@
+[target.arm-unknown-linux-musleabihf]
+linker = "arm-linux-gnueabihf-ld"
+rustflags = "-C target-cpu=arm1176jzf-s"
+
