@@ -3,19 +3,6 @@
 version = 3
 
 [[package]]
-name = "altair"
-version = "0.13.0"
-dependencies = [
- "console",
- "directories",
- "fs_extra",
- "intel8080",
- "serde",
- "serde_derive",
- "toml",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -109,6 +96,8 @@ dependencies = [
 [[package]]
 name = "intel8080"
 version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b0079c2f03edf4298d3114976d00f2b6198486ecfc93dcc0f7fd1fc1ac6bf0f"
 
 [[package]]
 name = "lazy_static"
@@ -210,6 +199,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "teletype"
+version = "0.13.0"
+dependencies = [
+ "console",
+ "directories",
+ "fs_extra",
+ "intel8080",
+ "serde",
+ "serde_derive",
+ "toml",
 ]
 
 [[package]]
