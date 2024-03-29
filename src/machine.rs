@@ -1,8 +1,6 @@
 use console::Term;
-use intel8080::CPU;
-use std::{
-    env, error::Error, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration,
-};
+use intel8080::cpu::CPU;
+use std::{env, error::Error, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration};
 
 pub fn run() -> Result<(), Box<dyn Error>> {
     let (tx, rx) = mpsc::channel();
