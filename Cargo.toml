@@ -13,7 +13,7 @@ readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-intel8080 = "0.18.0"
+intel8080 = { path = "../Intel8080" }
 console = "0.15.2"
 toml = "0.7.0"
 serde = "1.0.152"

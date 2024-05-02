@@ -1,4 +1,4 @@
-use std::process;
+use std::error::Error;
 
 mod config;
 mod machine;
@@ -6,10 +6,8 @@ mod teletype;
 
 use machine::Machine;
 
-fn main() {
-    let mut m = Machine::new();
-    if let Err(e) = m.run() {
-        println!("{}", e);
-        process::exit(1);
-    }
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut m = Machine::new()?;
+    m.run()?;
+    Ok(())
 }

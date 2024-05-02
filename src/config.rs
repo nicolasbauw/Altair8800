@@ -1,16 +1,23 @@
-use std::{fs, error::Error};
-use serde_derive::Deserialize;
 use directories::UserDirs;
+use serde_derive::Deserialize;
+use std::{error::Error, fs};
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub keyboard: KeyboardConfig,
+    pub memory: MemConfig,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct KeyboardConfig {
     pub char_delay: u64,
     pub line_delay: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MemConfig {
+    pub rom: String,
+    pub ram: u16,
 }
 
 pub fn load_config_file() -> Result<Config, Box<dyn Error>> {

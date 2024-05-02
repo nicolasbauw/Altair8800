@@ -1,31 +1,30 @@
 use console::Term;
 use intel8080::cpu::CPU;
-use std::{env, error::Error, io::stdout, io::Write, process, sync::mpsc, thread, time::Duration};
+use std::{error::Error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
 
 pub struct Machine {
     pub cpu: CPU,
+    config: crate::config::Config,
 }
 
 impl Machine {
-    pub fn new() -> Self {
-        Self { cpu: CPU::new() }
+    pub fn new() -> Result<Machine, Box<dyn Error>> {
+        let config = crate::config::load_config_file()?;
+        Ok(Self {
+            cpu: CPU::new(config.memory.ram),
+            config,
+        })
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
         let (tx, rx) = mpsc::channel();
-        let mut a = env::args();
         let term = Term::stdout();
         /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
         otherwise automatic RAM detection routine loops forever */
         self.cpu.bus.set_romspace(0xffff, 0xffff);
 
         // Loads assembled program into memory
-        if let Some(f) = a.nth(1) {
-            self.cpu.bus.load_bin(&f, 0x0)?;
-        } else {
-            println!("No file specified");
-            process::exit(1);
-        }
+        self.cpu.bus.load_bin(&self.config.memory.rom, 0x0)?;
 
         let mut teletype = crate::teletype::Teletype::new();
 

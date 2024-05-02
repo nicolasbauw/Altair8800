@@ -100,9 +100,7 @@ dependencies = [
 
 [[package]]
 name = "intel8080"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73cb7ad4e667a4c58334e06ff7118910ce654248cd81d4c6ca6f2750f8d8d0ae"
+version = "0.19.0"
 
 [[package]]
 name = "lazy_static"
