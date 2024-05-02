@@ -21,7 +21,7 @@ impl Machine {
         let term = Term::stdout();
         /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
         otherwise automatic RAM detection routine loops forever */
-        self.cpu.bus.set_romspace(0xffff, 0xffff);
+        self.cpu.bus.set_romspace(self.config.memory.ram, self.config.memory.ram);
 
         // Loads assembled program into memory
         self.cpu.bus.load_bin(&self.config.memory.rom, 0x0)?;
