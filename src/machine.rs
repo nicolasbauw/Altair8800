@@ -1,6 +1,6 @@
 use console::Term;
 use intel8080::cpu::CPU;
-use std::{error::Error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+use std::{error::Error, path::PathBuf, fs, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
 
 pub struct Machine {
     pub cpu: CPU,
@@ -14,6 +14,21 @@ impl Machine {
             cpu: CPU::new(config.memory.ram),
             config,
         })
+    }
+    
+    pub fn save_snapshot(&mut self) -> std::io::Result<()> {
+        let mut snapshot: Vec<u8> = Vec::new();
+        let mut file = PathBuf::from(&self.config.snapshot.dir);
+        file.push("test.snapshot");
+        
+        // Magic number
+        snapshot.extend_from_slice(&[0x41, 0x4c, 0x54, 0x52]);
+        
+        // Snapshot version + 3 null bytes
+        snapshot.extend_from_slice(&[0x01, 0x00, 0x00, 0x00]);
+        
+        fs::write(file, snapshot)?;
+        Ok(())
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
