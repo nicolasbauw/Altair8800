@@ -1,6 +1,10 @@
-use console::Term;
+use crate::teletype::Teletype;
 use intel8080::cpu::CPU;
-use std::{error::Error, path::PathBuf, fs, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+use std::{
+    error::Error, fs, io::stdout, io::Write, path::PathBuf, sync::mpsc, thread, time::Duration,
+};
+
+use crate::teletype::Console;
 
 pub struct Machine {
     pub cpu: CPU,
@@ -15,40 +19,37 @@ impl Machine {
             config,
         })
     }
-    
+
     pub fn save_snapshot(&mut self) -> std::io::Result<()> {
         let mut snapshot: Vec<u8> = Vec::new();
         let mut file = PathBuf::from(&self.config.snapshot.dir);
         file.push("test.snapshot");
-        
+
         // Magic number
         snapshot.extend_from_slice(&[0x41, 0x4c, 0x54, 0x52]);
-        
+
         // Snapshot version + 3 null bytes
         snapshot.extend_from_slice(&[0x01, 0x00, 0x00, 0x00]);
-        
+
         fs::write(file, snapshot)?;
         Ok(())
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
         let (tx, rx) = mpsc::channel();
-        let term = Term::stdout();
         /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
         otherwise automatic RAM detection routine loops forever */
-        self.cpu.bus.set_romspace(self.config.memory.ram, self.config.memory.ram);
+        self.cpu
+            .bus
+            .set_romspace(self.config.memory.ram, self.config.memory.ram);
 
         // Loads assembled program into memory
         self.cpu.bus.load_bin(&self.config.memory.rom, 0x0)?;
 
-        let mut teletype = crate::teletype::Teletype::new();
+        // Spawns the console thread
+        Console::spawn(tx);
 
-        // Since the console crate read key function is blocking, we spawn a thread
-        thread::spawn(move || loop {
-            if let Some(ch) = crate::teletype::getch(&term, &tx) {
-                tx.send(ch).unwrap()
-            }
-        });
+        let mut teletype = Teletype::new();
 
         loop {
             // Checking if data was sent from the "teletype" thread
