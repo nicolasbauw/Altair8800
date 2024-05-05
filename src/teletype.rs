@@ -7,6 +7,12 @@ pub struct Teletype {
     pub data: u8,    // Device 1
 }
 
+pub enum ConsoleMsg {
+    Char(u8),
+    LoadSnap,
+    SaveSnap,
+}
+
 pub struct Console {}
 
 impl Teletype {
@@ -19,17 +25,17 @@ impl Teletype {
 }
 
 impl Console {
-    pub fn spawn(tx: std::sync::mpsc::Sender<u8>) {
+    pub fn spawn(tx: std::sync::mpsc::Sender<ConsoleMsg>) {
         let term = Term::stdout();
         // Since the console crate read key function is blocking, we spawn a thread
         thread::spawn(move || loop {
             if let Some(ch) = Console::getch(&term, &tx) {
-                tx.send(ch).unwrap()
+                tx.send(ConsoleMsg::Char(ch)).unwrap()
             }
         });
     }
 
-    pub fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<u8>) -> Option<u8> {
+    pub fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<ConsoleMsg>) -> Option<u8> {
         match term.read_key() {
             Ok(k) => match k {
                 Key::Char(c) => Some(c as u8),
@@ -48,7 +54,7 @@ impl Console {
 
     pub fn toggle_menu(
         term: &console::Term,
-        tx: &std::sync::mpsc::Sender<u8>,
+        tx: &std::sync::mpsc::Sender<ConsoleMsg>,
     ) -> Result<(), Box<dyn Error>> {
         let config = config::load_config_file()?;
         term.move_cursor_to(0, 0)?;
@@ -72,18 +78,18 @@ impl Console {
                     let bas = fs::read_to_string(file)?;
                     for line in bas.lines() {
                         for c in line.chars() {
-                            tx.send(c as u8)?;
+                            tx.send(ConsoleMsg::Char(c as u8))?;
                             thread::sleep(std::time::Duration::from_millis(
                                 config.keyboard.char_delay,
                             ));
                         }
-                        tx.send(0x0d)?;
+                        tx.send(ConsoleMsg::Char(0x0d))?;
                         thread::sleep(std::time::Duration::from_millis(config.keyboard.line_delay));
                     }
                     return Ok(());
                 }
                 Key::Char('C') => {
-                    tx.send(0x03)?;
+                    
                 }
                 _ => {}
             }

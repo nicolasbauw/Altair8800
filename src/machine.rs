@@ -1,4 +1,4 @@
-use crate::teletype::Teletype;
+use crate::teletype::{ Teletype, ConsoleMsg };
 use intel8080::cpu::CPU;
 use std::{
     error::Error, fs, io::stdout, io::Write, path::PathBuf, sync::mpsc, thread, time::Duration,
@@ -53,12 +53,17 @@ impl Machine {
 
         loop {
             // Checking if data was sent from the "teletype" thread
-            if let Ok(ch) = rx.try_recv() {
+            if let Ok(msg) = rx.try_recv() {
+                match msg {
+                    ConsoleMsg::Char(ch) => {
                 // A key has been pressed ? device 0 sends 0 (output device ready)
                 teletype.control = 0;
                 // Then, device 1 sends the key code
-                teletype.data = ch;
+                teletype.data = ch;},
+                ConsoleMsg::LoadSnap => {},
+                ConsoleMsg::SaveSnap => {}
             }
+        }
 
             // Will likely never happen. There just to meet function return type requirement.
             if self.cpu.pc == 0xffff {
