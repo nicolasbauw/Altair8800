@@ -61,7 +61,7 @@ impl Machine {
                 // Then, device 1 sends the key code
                 teletype.data = ch;},
                 ConsoleMsg::LoadSnap => {},
-                ConsoleMsg::SaveSnap => {}
+                ConsoleMsg::SaveSnap => { self.save_snapshot()?; }
             }
         }
 
