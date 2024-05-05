@@ -60,9 +60,10 @@ impl Console {
         term.move_cursor_to(0, 0)?;
         term.clear_screen().unwrap();
         println!(
-            "{}uit\t{}oad",
+            "{}uit\t{}oad\t{}ave Snapshot",
             style("[Q]").magenta(),
-            style("[L]").magenta()
+            style("[L]").magenta(),
+            style("[S]").magenta()
         );
         loop {
             match term.read_key()? {
@@ -88,8 +89,9 @@ impl Console {
                     }
                     return Ok(());
                 }
-                Key::Char('C') => {
-                    
+                Key::Char('S') => {
+                    tx.send(ConsoleMsg::SaveSnap)?;
+                    term.write_line("Snapshot saved ! Press ESC to close menu")?;
                 }
                 _ => {}
             }
