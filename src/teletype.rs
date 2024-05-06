@@ -60,10 +60,11 @@ impl Console {
         term.move_cursor_to(0, 0)?;
         term.clear_screen().unwrap();
         println!(
-            "{}uit\t{}oad\t{}ave Snapshot",
+            "{}uit\t{}Auto type\t{}ave Snapshot\t{}oad Snapshot",
             style("[Q]").magenta(),
-            style("[L]").magenta(),
-            style("[S]").magenta()
+            style("[A]").magenta(),
+            style("[S]").magenta(),
+            style("[L]").magenta()
         );
         loop {
             match term.read_key()? {
@@ -72,7 +73,7 @@ impl Console {
                     return Ok(());
                 }
                 Key::Char('Q') => process::exit(0),
-                Key::Char('L') => {
+                Key::Char('A') => {
                     term.clear_screen()?;
                     term.write_line("File ? ")?;
                     let file = term.read_line()?;
@@ -92,6 +93,10 @@ impl Console {
                 Key::Char('S') => {
                     tx.send(ConsoleMsg::SaveSnap)?;
                     term.write_line("Snapshot saved ! Press ESC to close menu")?;
+                }
+                Key::Char('L') => {
+                    tx.send(ConsoleMsg::LoadSnap)?;
+                    term.write_line("Snapshot loaded ! Press ESC to close menu")?;
                 }
                 _ => {}
             }

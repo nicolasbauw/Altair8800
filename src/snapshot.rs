@@ -34,4 +34,12 @@ impl Machine {
         self.cpu.halt = false;
         Ok(())
     }
+
+    pub fn load_snapshot(&mut self) -> std::io::Result<()> {
+        let mut file = PathBuf::from(&self.config.snapshot.dir);
+        file.push("test.snapshot");
+
+        let snapshot = fs::read(file)?;
+        Ok(())
+    }
 }
