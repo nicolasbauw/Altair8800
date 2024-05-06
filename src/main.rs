@@ -2,6 +2,7 @@ use std::error::Error;
 
 mod config;
 mod machine;
+mod snapshot;
 mod teletype;
 
 use machine::Machine;
