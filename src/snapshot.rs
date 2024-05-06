@@ -16,32 +16,19 @@ impl Machine {
         // Snapshot version + 3 null bytes
         snapshot.extend_from_slice(&[0x01, 0x00, 0x00, 0x00]);
 
-        // accumulator + 3 register pairs
-        snapshot.push(self.cpu.reg.a);
-        snapshot.push(self.cpu.reg.b);
-        snapshot.push(self.cpu.reg.c);
-        snapshot.push(self.cpu.reg.d);
-        snapshot.push(self.cpu.reg.e);
-        snapshot.push(self.cpu.reg.h);
-        snapshot.push(self.cpu.reg.l);
+        // CPU snapshot
+        snapshot.extend_from_slice(self.cpu.export_snapshot().as_slice());
 
-        // Flags
-        snapshot.push(self.cpu.flags.as_byte());
+        // 12 null bytes
+        snapshot.extend_from_slice(&[0x00; 12]);
 
-        // pc
-        snapshot.push(((self.cpu.pc & 0xFF00) >> 8) as u8);
-        snapshot.push((self.cpu.pc & 0x00FF) as u8);
+        // ROM start / end
+        let r = self.cpu.bus.get_romspace();
+        snapshot.extend_from_slice(r.0.to_be_bytes().as_slice());
+        snapshot.extend_from_slice(r.1.to_be_bytes().as_slice());
 
-        // sp
-        snapshot.push(((self.cpu.sp & 0xFF00) >> 8) as u8);
-        snapshot.push((self.cpu.sp & 0x00FF) as u8);
-
-        // int
-        snapshot.push((self.cpu.int.0) as u8);
-        snapshot.push(self.cpu.int.1);
-
-        // inte
-        snapshot.push((self.cpu.inte) as u8);
+        // RAM
+        snapshot.extend_from_slice(self.cpu.bus.export_address_space().as_slice());
 
         fs::write(file, snapshot)?;
         self.cpu.halt = false;
