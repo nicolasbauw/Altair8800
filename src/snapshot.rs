@@ -36,7 +36,15 @@ impl Machine {
         snapshot.push(((self.cpu.sp & 0xFF00) >> 8) as u8);
         snapshot.push((self.cpu.sp & 0x00FF) as u8);
 
+        // int
+        snapshot.push((self.cpu.int.0) as u8);
+        snapshot.push(self.cpu.int.1);
+
+        // inte
+        snapshot.push((self.cpu.inte) as u8);
+
         fs::write(file, snapshot)?;
+        self.cpu.halt = false;
         Ok(())
     }
 }
