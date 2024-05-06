@@ -60,7 +60,7 @@ impl Console {
         term.move_cursor_to(0, 0)?;
         term.clear_screen().unwrap();
         println!(
-            "{}uit\t{}Auto type\t{}ave Snapshot\t{}oad Snapshot",
+            "{}uit\t{}Auto typing\t{}ave Snapshot\t{}oad Snapshot",
             style("[Q]").magenta(),
             style("[A]").magenta(),
             style("[S]").magenta(),
