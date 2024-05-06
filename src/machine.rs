@@ -34,7 +34,7 @@ impl Machine {
         let mut teletype = Teletype::new();
 
         loop {
-            // Checking if data was sent from the "teletype" thread
+            // Checking if data was sent from the "console" thread
             if let Ok(msg) = rx.try_recv() {
                 match msg {
                     ConsoleMsg::Char(ch) => {
