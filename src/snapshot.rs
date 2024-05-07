@@ -63,6 +63,37 @@ impl Machine {
 
         let snapshot = fs::read(file)?;
         if snapshot[0..3] != [0x41, 0x4c, 0x54, 0x52] { return Err(SnapshotError::InvalidHeader) }
+        
+        // CPU registers
+        self.cpu.reg.a = snapshot[0x08];
+        self.cpu.reg.b = snapshot[0x09];
+        self.cpu.reg.c = snapshot[0x0A];
+        self.cpu.reg.d = snapshot[0x0B];
+        self.cpu.reg.e = snapshot[0x0C];
+        self.cpu.reg.h = snapshot[0x0D];
+        self.cpu.reg.l = snapshot[0x0E];
+
+        // CPU flags
+        self.cpu.flags.from_byte(snapshot[0x0F]);
+
+        // PC
+        self.cpu.pc = u16::from_be_bytes([snapshot[0x10], snapshot[0x11]]);
+
+        // SP
+        self.cpu.sp = u16::from_be_bytes([snapshot[0x12], snapshot[0x13]]);
+
+        // int
+        self.cpu.int = (snapshot[0x14] != 0, snapshot[0x15]);
+
+        // inte
+        self.cpu.inte = snapshot[0x16] != 0;
+
+        // slice_duration
+        let slice_duration = u32::from_be_bytes([snapshot[0x18], snapshot[0x19], snapshot[0x1A], snapshot[0x1B]]);
+        
+        // slice_max_cycles
+        let slice__max_cycles = u32::from_be_bytes([snapshot[0x1C], snapshot[0x1D], snapshot[0x1E], snapshot[0x1F]]);
+
         Ok(())
     }
 }
