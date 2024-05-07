@@ -1,5 +1,27 @@
 use crate::Machine;
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, fmt, error};
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum SnapshotError {
+    InvalidHeader
+}
+
+impl fmt::Display for SnapshotError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Snapshot error : ")?;
+        f.write_str(match self {
+            SnapshotError::InvalidHeader => "Invalid header",
+        })
+    }
+}
+
+impl From<std::io::Error> for SnapshotError {
+    fn from(_e: std::io::Error) -> SnapshotError {
+        SnapshotError::InvalidHeader
+    }
+}
+
+impl error::Error for SnapshotError {}
 
 impl Machine {
     pub fn save_snapshot(&mut self) -> std::io::Result<()> {
@@ -35,11 +57,12 @@ impl Machine {
         Ok(())
     }
 
-    pub fn load_snapshot(&mut self) -> std::io::Result<()> {
+    pub fn load_snapshot(&mut self) -> Result<(), SnapshotError> {
         let mut file = PathBuf::from(&self.config.snapshot.dir);
         file.push("test.snapshot");
 
         let snapshot = fs::read(file)?;
+        if snapshot[0..3] != [0x41, 0x4c, 0x54, 0x52] { return Err(SnapshotError::InvalidHeader) }
         Ok(())
     }
 }
