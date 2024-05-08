@@ -45,13 +45,13 @@ impl Machine {
                     }
                     ConsoleMsg::LoadSnap => {
                         match self.load_snapshot() {
-                            Ok(_) => { println!("Snapshot loaded ! Press ESC to close menu"); },
+                            Ok(_) => { println!("Snapshot loaded !"); },
                             Err(e) => { println!("{}", e); }
                         }
                     }
                     ConsoleMsg::SaveSnap => {
                         match self.save_snapshot() {
-                            Ok(_) => { println!("Snapshot saved ! Press ESC to close menu"); },
+                            Ok(_) => { println!("Snapshot saved !"); },
                             Err(e) => { println!("{}", e); }
                         }
                     }
