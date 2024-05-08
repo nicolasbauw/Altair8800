@@ -44,10 +44,16 @@ impl Machine {
                         teletype.data = ch;
                     }
                     ConsoleMsg::LoadSnap => {
-                        self.load_snapshot()?;
+                        match self.load_snapshot() {
+                            Ok(_) => { println!("Snapshot loaded ! Press ESC to close menu"); },
+                            Err(e) => { println!("{}", e); }
+                        }
                     }
                     ConsoleMsg::SaveSnap => {
-                        self.save_snapshot()?;
+                        match self.save_snapshot() {
+                            Ok(_) => { println!("Snapshot saved ! Press ESC to close menu"); },
+                            Err(e) => { println!("{}", e); }
+                        }
                     }
                 }
             }

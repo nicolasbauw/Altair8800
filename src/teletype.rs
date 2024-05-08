@@ -92,11 +92,9 @@ impl Console {
                 }
                 Key::Char('S') => {
                     tx.send(ConsoleMsg::SaveSnap)?;
-                    term.write_line("Snapshot saved ! Press ESC to close menu")?;
                 }
                 Key::Char('L') => {
                     tx.send(ConsoleMsg::LoadSnap)?;
-                    term.write_line("Snapshot loaded ! Press ESC to close menu")?;
                 }
                 _ => {}
             }

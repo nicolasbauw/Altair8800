@@ -43,9 +43,9 @@ impl Machine {
         file.push("test.snapshot");
 
         let snapshot = fs::read(file)?;
-        /*if snapshot[0..3] != [0x41, 0x4c, 0x54, 0x52] {
+        if snapshot[0..3] != [0x41, 0x4c, 0x54, 0x52] {
             return Err(SnapshotError::InvalidHeader);
-        }*/
+        }
 
         self.cpu.import_snapshot(snapshot);
 
