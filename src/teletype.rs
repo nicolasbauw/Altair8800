@@ -60,11 +60,12 @@ impl Console {
         term.move_cursor_to(0, 0)?;
         term.clear_screen().unwrap();
         println!(
-            "{}uit\t{}Auto typing\t{}ave Snapshot\t{}oad Snapshot",
+            "{}uit\t{}uto typing\t{}ave Snapshot\t{}oad Snapshot\t{}Toggle menu",
             style("[Q]").magenta(),
             style("[A]").magenta(),
             style("[S]").magenta(),
-            style("[L]").magenta()
+            style("[L]").magenta(),
+            style("[ESC]").magenta(),
         );
         loop {
             match term.read_key()? {
