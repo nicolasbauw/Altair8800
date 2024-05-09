@@ -1,4 +1,5 @@
 use crate::Machine;
+use intel8080::memory::SnapshotError;
 use std::{fs, path::PathBuf};
 impl Machine {
     pub fn save_snapshot(&mut self) -> std::io::Result<()> {
@@ -13,7 +14,7 @@ impl Machine {
         Ok(())
     }
 
-    pub fn load_snapshot(&mut self) -> std::io::Result<()> {
+    pub fn load_snapshot(&mut self) -> Result<(), SnapshotError> {
         let mut file = PathBuf::from(&self.config.snapshot.dir);
         file.push("test.snapshot");
 
