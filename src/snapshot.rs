@@ -1,5 +1,5 @@
 use crate::Machine;
-use intel8080::memory::SnapshotError;
+use intel8080::bus::SnapshotError;
 use std::{fs, path::PathBuf};
 impl Machine {
     pub fn save_snapshot(&mut self) -> std::io::Result<()> {
