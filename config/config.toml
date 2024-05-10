@@ -3,5 +3,8 @@ char_delay = 30
 line_delay = 200
 
 [memory]
-rom = "/Users/nicolasb/Dev/4kbasic/4kbas32.bin"
+rom = "/path/to/rom/4kbas32.bin"
 ram = 0x7FFF
+
+[snapshot]
+dir = "/path/to/snapshots/"
