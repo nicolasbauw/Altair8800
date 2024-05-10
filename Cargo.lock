@@ -101,6 +101,8 @@ dependencies = [
 [[package]]
 name = "intel8080"
 version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a38912d957b44b70d74f271ab417bcdcb9441dab662fb6da92915e916b112488"
 
 [[package]]
 name = "lazy_static"
@@ -211,7 +213,7 @@ dependencies = [
 
 [[package]]
 name = "teletype"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "console",
  "directories",
