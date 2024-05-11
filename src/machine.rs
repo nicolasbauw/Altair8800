@@ -80,7 +80,10 @@ impl Machine {
             .set_romspace(self.config.memory.ram, self.config.memory.ram);
 
         // Loads assembled program into memory
-        self.cpu.bus.load_bin(&self.config.memory.rom, 0x0)?;
+        if let Err(_) = self.cpu.bus.load_bin(&self.config.memory.rom, 0x0) {
+            println!("Can't load {} !", &self.config.memory.rom);
+            return Err(MachineError::IOError);
+        }
 
         // Spawns the console thread
         Console::spawn(tx);
