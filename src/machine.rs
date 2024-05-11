@@ -1,7 +1,37 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
 use intel8080::cpu::CPU;
-use std::{error::Error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+use std::{fmt, error, error::Error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum MachineError {
+    ConfigFile,
+    IOError,
+}
+
+impl fmt::Display for MachineError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Snapshot error : ")?;
+        f.write_str(match self {
+            MachineError::ConfigFile => "Can't load config file",
+            MachineError::IOError => "I/O Error",
+        })
+    }
+}
+
+impl From<std::io::Error> for MachineError {
+    fn from(_e: std::io::Error) -> MachineError {
+        MachineError::IOError
+    }
+}
+
+impl From<MachineError> for std::io::Error {
+    fn from(e: MachineError) -> std::io::Error {
+        std::io::Error::new(std::io::ErrorKind::Other, e)
+    }
+}
+
+impl error::Error for MachineError {}
 
 pub struct Machine {
     pub cpu: CPU,
