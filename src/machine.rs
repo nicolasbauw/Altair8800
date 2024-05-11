@@ -1,11 +1,12 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
 use intel8080::cpu::CPU;
-use std::{fmt, error, error::Error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+use std::{fmt, error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum MachineError {
     ConfigFile,
+    ConfigFileFmt,
     IOError,
 }
 
@@ -13,6 +14,7 @@ impl fmt::Display for MachineError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("Snapshot error : ")?;
         f.write_str(match self {
+            MachineError::ConfigFileFmt => "Bad config file format",
             MachineError::ConfigFile => "Can't load config file",
             MachineError::IOError => "I/O Error",
         })
@@ -22,6 +24,12 @@ impl fmt::Display for MachineError {
 impl From<std::io::Error> for MachineError {
     fn from(_e: std::io::Error) -> MachineError {
         MachineError::IOError
+    }
+}
+
+impl From<toml::de::Error> for MachineError {
+    fn from(_e: toml::de::Error) -> MachineError {
+        MachineError::ConfigFileFmt
     }
 }
 
@@ -39,7 +47,7 @@ pub struct Machine {
 }
 
 impl Machine {
-    pub fn new() -> Result<Machine, Box<dyn Error>> {
+    pub fn new() -> Result<Machine, MachineError> {
         let config = crate::config::load_config_file()?;
         Ok(Self {
             cpu: CPU::new(config.memory.ram),
@@ -47,7 +55,7 @@ impl Machine {
         })
     }
 
-    pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
+    pub fn run(&mut self) -> Result<(), MachineError> {
         let (tx, rx) = mpsc::channel();
         /* This byte of ROM at the end of address space is there to meet basic 3.2 initialization code requirement
         otherwise automatic RAM detection routine loops forever */
