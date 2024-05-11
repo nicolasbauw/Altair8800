@@ -72,6 +72,9 @@ impl Console {
             match term.read_key()? {
                 Key::Escape => {
                     term.clear_screen().unwrap();
+                    println!("Emulation resumed !");
+                    thread::sleep(std::time::Duration::from_secs(1));
+                    term.clear_screen().unwrap();
                     return Ok(());
                 }
                 Key::Char('Q') => process::exit(0),
