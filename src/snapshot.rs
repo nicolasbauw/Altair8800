@@ -1,5 +1,4 @@
-use crate::Machine;
-use intel8080::bus::SnapshotError;
+use crate::{machine::MachineError, Machine};
 use std::{fs, path::PathBuf};
 impl Machine {
     pub fn save_snapshot(&mut self) -> std::io::Result<()> {
@@ -14,7 +13,7 @@ impl Machine {
         Ok(())
     }
 
-    pub fn load_snapshot(&mut self) -> Result<(), SnapshotError> {
+    pub fn load_snapshot(&mut self) -> Result<(), MachineError> {
         let mut file: PathBuf = PathBuf::from(&self.config.snapshot.dir);
         file.push("altair.snapshot");
 
