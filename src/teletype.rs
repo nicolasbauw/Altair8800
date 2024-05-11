@@ -27,6 +27,7 @@ impl Teletype {
 impl Console {
     pub fn spawn(tx: std::sync::mpsc::Sender<ConsoleMsg>) {
         let term = Term::stdout();
+        term.clear_screen().unwrap();
         // Since the console crate read key function is blocking, we spawn a thread
         thread::spawn(move || loop {
             if let Some(ch) = Console::getch(&term, &tx) {
@@ -58,7 +59,7 @@ impl Console {
     ) -> Result<(), Box<dyn Error>> {
         let config = config::load_config_file()?;
         term.move_cursor_to(0, 0)?;
-        term.clear_screen().unwrap();
+        term.clear_screen()?;
         println!(
             "{}uit\t{}uto typing\t{}ave Snapshot\t{}oad Snapshot\t{}Toggle menu",
             style("[Q]").magenta(),
