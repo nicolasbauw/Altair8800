@@ -1,6 +1,6 @@
-use crate::config;
+use crate::{config, MachineError};
 use console::{style, Key, Term};
-use std::{error::Error, fs, process, thread};
+use std::{fs, process, thread};
 
 pub struct Teletype {
     pub control: u8, // Device 0
@@ -56,7 +56,7 @@ impl Console {
     pub fn toggle_menu(
         term: &console::Term,
         tx: &std::sync::mpsc::Sender<ConsoleMsg>,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<(), MachineError> {
         let config = config::load_config_file()?;
         term.move_cursor_to(0, 0)?;
         term.clear_screen()?;

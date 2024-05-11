@@ -1,7 +1,7 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
 use intel8080::cpu::CPU;
-use std::{fmt, error, io::stdout, io::Write, sync::mpsc, thread, time::Duration};
+use std::{fmt, error, io::stdout, io::Write, sync::mpsc, sync::mpsc::SendError, thread, time::Duration};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum MachineError {
@@ -29,6 +29,12 @@ impl From<std::io::Error> for MachineError {
 
 impl From<toml::de::Error> for MachineError {
     fn from(_e: toml::de::Error) -> MachineError {
+        MachineError::ConfigFileFmt
+    }
+}
+
+impl From<SendError<ConsoleMsg>> for MachineError {
+    fn from(_e: SendError<ConsoleMsg>) -> MachineError {
         MachineError::ConfigFileFmt
     }
 }
