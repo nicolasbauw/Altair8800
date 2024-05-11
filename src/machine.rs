@@ -8,17 +8,19 @@ pub enum MachineError {
     ConfigFile,
     ConfigFileFmt,
     IOError,
-    SendMsgError
+    SendMsgError,
+    SnapshotError
 }
 
 impl fmt::Display for MachineError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("Snapshot error : ")?;
+        f.write_str("Machine error : ")?;
         f.write_str(match self {
             MachineError::ConfigFileFmt => "Bad config file format",
             MachineError::ConfigFile => "Can't load config file",
             MachineError::IOError => "I/O Error",
-            MachineError::SendMsgError => "Message not sent"
+            MachineError::SendMsgError => "Message not sent",
+            MachineError::SnapshotError => "Snapshot I.O error"
         })
     }
 }
@@ -38,6 +40,12 @@ impl From<toml::de::Error> for MachineError {
 impl From<SendError<ConsoleMsg>> for MachineError {
     fn from(_e: SendError<ConsoleMsg>) -> MachineError {
         MachineError::SendMsgError
+    }
+}
+
+impl From<intel8080::bus::SnapshotError> for MachineError {
+    fn from(_e: intel8080::bus::SnapshotError) -> MachineError {
+        MachineError::SnapshotError
     }
 }
 
