@@ -1,11 +1,10 @@
-use std::{error::Error, process::ExitCode};
+use std::process::ExitCode;
+use machine::{Machine, MachineError};
 
 mod config;
 mod machine;
 mod snapshot;
 mod teletype;
-
-use machine::Machine;
 
 fn main() -> ExitCode {
     match run() {
@@ -17,7 +16,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn run() -> Result<(), Box<dyn Error>> {
+fn run() -> Result<(), MachineError> {
     let mut m = Machine::new()?;
     m.run()?;
     Ok(())
