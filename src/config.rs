@@ -1,6 +1,7 @@
 use directories::UserDirs;
 use serde_derive::Deserialize;
-use std::{error::Error, fs};
+use crate::machine::MachineError;
+use std::fs;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -26,8 +27,8 @@ pub struct SnapshotDir {
     pub dir: String
 }
 
-pub fn load_config_file() -> Result<Config, Box<dyn Error>> {
-    let user_dirs = UserDirs::new().ok_or("Could not get user directory")?;
+pub fn load_config_file() -> Result<Config, MachineError> {
+    let user_dirs = UserDirs::new().ok_or(MachineError::ConfigFile)?;
     let mut cfg = user_dirs.home_dir().to_path_buf();
     cfg.push(".config/teletype/config.toml");
     let buf = fs::read_to_string(cfg)?;
