@@ -8,6 +8,7 @@ pub enum MachineError {
     ConfigFile,
     ConfigFileFmt,
     IOError,
+    SendMsgError
 }
 
 impl fmt::Display for MachineError {
@@ -17,6 +18,7 @@ impl fmt::Display for MachineError {
             MachineError::ConfigFileFmt => "Bad config file format",
             MachineError::ConfigFile => "Can't load config file",
             MachineError::IOError => "I/O Error",
+            MachineError::SendMsgError => "Message not sent"
         })
     }
 }
@@ -35,7 +37,7 @@ impl From<toml::de::Error> for MachineError {
 
 impl From<SendError<ConsoleMsg>> for MachineError {
     fn from(_e: SendError<ConsoleMsg>) -> MachineError {
-        MachineError::ConfigFileFmt
+        MachineError::SendMsgError
     }
 }
 
