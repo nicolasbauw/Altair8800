@@ -20,7 +20,7 @@ impl fmt::Display for MachineError {
             MachineError::ConfigFile => "Can't load config file",
             MachineError::IOError => "I/O Error",
             MachineError::SendMsgError => "Message not sent",
-            MachineError::SnapshotError => "Snapshot I.O error"
+            MachineError::SnapshotError => "Snapshot I/O error"
         })
     }
 }
