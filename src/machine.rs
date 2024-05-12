@@ -1,7 +1,9 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
 use intel8080::cpu::CPU;
-use std::{fmt, error, io::stdout, io::Write, sync::mpsc, sync::mpsc::SendError, thread, time::Duration};
+use std::{
+    error, fmt, io::stdout, io::Write, sync::mpsc, sync::mpsc::SendError, thread, time::Duration,
+};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum MachineError {
@@ -9,7 +11,7 @@ pub enum MachineError {
     ConfigFileFmt,
     IOError,
     SendMsgError,
-    SnapshotError
+    SnapshotError,
 }
 
 impl fmt::Display for MachineError {
@@ -20,7 +22,7 @@ impl fmt::Display for MachineError {
             MachineError::ConfigFile => "Can't load config file",
             MachineError::IOError => "I/O Error",
             MachineError::SendMsgError => "Message not sent",
-            MachineError::SnapshotError => "Snapshot I/O error"
+            MachineError::SnapshotError => "Snapshot I/O error",
         })
     }
 }
@@ -81,7 +83,7 @@ impl Machine {
 
         // Loads assembled program into memory
         if let Err(_) = self.cpu.bus.load_bin(&self.config.memory.rom, 0x0) {
-            println!("Can't load {} !", &self.config.memory.rom);
+            println!("Can't load ROM file {} !", &self.config.memory.rom);
             return Err(MachineError::IOError);
         }
 
@@ -100,18 +102,22 @@ impl Machine {
                         // Then, device 1 sends the key code
                         teletype.data = ch;
                     }
-                    ConsoleMsg::LoadSnap => {
-                        match self.load_snapshot() {
-                            Ok(_) => { println!("Snapshot loaded !"); },
-                            Err(e) => { println!("{}", e); }
+                    ConsoleMsg::LoadSnap => match self.load_snapshot() {
+                        Ok(_) => {
+                            println!("Snapshot loaded !");
                         }
-                    }
-                    ConsoleMsg::SaveSnap => {
-                        match self.save_snapshot() {
-                            Ok(_) => { println!("Snapshot saved !"); },
-                            Err(e) => { println!("{}", e); }
+                        Err(e) => {
+                            println!("{}", e);
                         }
-                    }
+                    },
+                    ConsoleMsg::SaveSnap => match self.save_snapshot() {
+                        Ok(_) => {
+                            println!("Snapshot saved !");
+                        }
+                        Err(e) => {
+                            println!("{}", e);
+                        }
+                    },
                 }
             }
 
