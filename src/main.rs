@@ -1,5 +1,5 @@
-use std::process::ExitCode;
 use machine::{Machine, MachineError};
+use std::process::ExitCode;
 
 mod config;
 mod machine;
@@ -7,13 +7,10 @@ mod snapshot;
 mod teletype;
 
 fn main() -> ExitCode {
-    match run() {
-        Ok(()) => ExitCode::from(0),
-        Err(e) => {
-            eprintln!("{e}");
-            ExitCode::from(1)
-        }
+    if let Err(_) = run() {
+        return ExitCode::from(1);
     }
+    ExitCode::from(0)
 }
 
 fn run() -> Result<(), MachineError> {
