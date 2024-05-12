@@ -1,5 +1,6 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
+use directories::UserDirs;
 use intel8080::cpu::CPU;
 use std::{
     error, fmt, io::stdout, io::Write, sync::mpsc, sync::mpsc::SendError, thread, time::Duration,
@@ -66,7 +67,14 @@ pub struct Machine {
 
 impl Machine {
     pub fn new() -> Result<Machine, MachineError> {
-        let config = crate::config::load_config_file()?;
+        let Ok(config) = crate::config::load_config_file() else {
+            let user_dirs = UserDirs::new().ok_or(MachineError::ConfigFile)?;
+            let mut cfg = user_dirs.home_dir().to_path_buf();
+            cfg.push(".config/teletype/config.toml");
+            println!("Can't load config file {}", cfg.to_str().unwrap());
+            return Err(MachineError::ConfigFile);
+        };
+
         Ok(Self {
             cpu: CPU::new(config.memory.ram),
             config,
@@ -81,7 +89,7 @@ impl Machine {
             .bus
             .set_romspace(self.config.memory.ram, self.config.memory.ram);
 
-        // Loads assembled program into memory
+        // Loads configured ROM to memory
         if let Err(_) = self.cpu.bus.load_bin(&self.config.memory.rom, 0x0) {
             println!("Can't load ROM file {} !", &self.config.memory.rom);
             return Err(MachineError::IOError);
