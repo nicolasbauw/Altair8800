@@ -106,16 +106,22 @@ impl Machine {
                         Ok(_) => {
                             println!("Snapshot loaded !");
                         }
-                        Err(e) => {
-                            println!("{}", e);
+                        Err(_) => {
+                            println!(
+                                "Can't load snapshot file {}altair.snapshot",
+                                self.config.snapshot.dir
+                            );
                         }
                     },
                     ConsoleMsg::SaveSnap => match self.save_snapshot() {
                         Ok(_) => {
                             println!("Snapshot saved !");
                         }
-                        Err(e) => {
-                            println!("{}", e);
+                        Err(_) => {
+                            println!(
+                                "Can't save snapshot file {}altair.snapshot",
+                                self.config.snapshot.dir
+                            );
                         }
                     },
                 }
