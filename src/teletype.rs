@@ -61,8 +61,10 @@ impl Console {
         term.move_cursor_to(0, 0)?;
         term.clear_screen()?;
         println!(
-            "{}uit\t{}uto typing\t{}ave Snapshot\t{}oad Snapshot\t{}Toggle menu",
+            "{}uit\t{}eset\t{}uto typing\t{}ave Snapshot\t{}oad Snapshot
+            \r\t\t\t{}Toggle menu",
             style("[Q]").magenta(),
+            style("[R]").magenta(),
             style("[A]").magenta(),
             style("[S]").magenta(),
             style("[L]").magenta(),
@@ -71,9 +73,6 @@ impl Console {
         loop {
             match term.read_key()? {
                 Key::Escape => {
-                    term.clear_screen().unwrap();
-                    println!("Emulation resumed !");
-                    thread::sleep(std::time::Duration::from_secs(1));
                     term.clear_screen().unwrap();
                     return Ok(());
                 }
