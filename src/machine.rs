@@ -132,6 +132,9 @@ impl Machine {
                             );
                         }
                     },
+                    ConsoleMsg::ResetCpu => {
+                        self.cpu.pc=0;
+                    }
                 }
             }
 

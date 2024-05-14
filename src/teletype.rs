@@ -11,6 +11,7 @@ pub enum ConsoleMsg {
     Char(u8),
     LoadSnap,
     SaveSnap,
+    ResetCpu,
 }
 
 pub struct Console {}
@@ -99,6 +100,11 @@ impl Console {
                 }
                 Key::Char('L') => {
                     tx.send(ConsoleMsg::LoadSnap)?;
+                }
+                Key::Char('R') => {
+                    tx.send(ConsoleMsg::ResetCpu)?;
+                    term.clear_screen().unwrap();
+                    return Ok(());
                 }
                 _ => {}
             }
