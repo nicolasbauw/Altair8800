@@ -58,19 +58,23 @@ impl Console {
         term: &console::Term,
         tx: &std::sync::mpsc::Sender<ConsoleMsg>,
     ) -> Result<(), MachineError> {
+        let term_width = term.size().1;
         let config = config::load_config_file()?;
         term.move_cursor_to(0, 0)?;
         term.clear_screen()?;
-        println!(
-            "{}uit\t{}eset\t{}uto typing\t{}ave Snapshot\t{}oad Snapshot
-            \r\t\t\t{}Toggle menu",
-            style("[Q]").magenta(),
-            style("[R]").magenta(),
-            style("[A]").magenta(),
-            style("[S]").magenta(),
-            style("[L]").magenta(),
-            style("[ESC]").magenta(),
-        );
+        if term_width < 80 {
+            println!("Terminal < 80 columns ! Press ESC");
+        } else {
+            println!(
+                "{}uit {}eset {}uto typing {}ave Snapshot {}oad Snapshot {}Toggle menu",
+                style("[Q]").magenta(),
+                style("[R]").magenta(),
+                style("[A]").magenta(),
+                style("[S]").magenta(),
+                style("[L]").magenta(),
+                style("[ESC]").magenta(),
+            );
+        }
         loop {
             match term.read_key()? {
                 Key::Escape => {
