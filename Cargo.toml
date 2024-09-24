@@ -1,6 +1,6 @@
 [package]
 name = "teletype"
-version = "0.15.0"
+version = "0.16.0"
 edition = "2021"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 description = "Altair 8800 / teletype emulator (via 88-SIO board) for my 8080 emulator"
