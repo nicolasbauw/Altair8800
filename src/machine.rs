@@ -133,8 +133,8 @@ impl Machine {
                         }
                     },
                     ConsoleMsg::ResetCpu => {
-                        self.cpu.pc=0;
-                    },
+                        self.cpu.pc = 0;
+                    }
                     ConsoleMsg::Quit => {
                         return Ok(());
                     }

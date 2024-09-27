@@ -1,13 +1,13 @@
+use crate::machine::MachineError;
 use directories::UserDirs;
 use serde_derive::Deserialize;
-use crate::machine::MachineError;
 use std::fs;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub keyboard: KeyboardConfig,
     pub memory: MemConfig,
-    pub snapshot: SnapshotDir
+    pub snapshot: SnapshotDir,
 }
 
 #[derive(Debug, Deserialize)]
@@ -24,7 +24,7 @@ pub struct MemConfig {
 
 #[derive(Debug, Deserialize)]
 pub struct SnapshotDir {
-    pub dir: String
+    pub dir: String,
 }
 
 pub fn load_config_file() -> Result<Config, MachineError> {

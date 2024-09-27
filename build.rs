@@ -1,5 +1,5 @@
-use fs_extra::{copy_items, dir::create};
 use directories::UserDirs;
+use fs_extra::{copy_items, dir::create};
 
 fn main() {
     if let Some(user_dirs) = UserDirs::new() {
@@ -18,6 +18,6 @@ fn main() {
         // Copy teletype/config.toml to home_dir/.config/teletype/config.toml
         let from_paths = vec!["config/config.toml"];
         println!("Copying {:#?} to {:#?}", from_paths, dest);
-        copy_items(&from_paths, dest, &options).unwrap(); 
+        copy_items(&from_paths, dest, &options).unwrap();
     }
- }
+}

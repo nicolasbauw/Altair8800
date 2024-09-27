@@ -61,7 +61,7 @@ impl Console {
         tx: &std::sync::mpsc::Sender<ConsoleMsg>,
     ) -> Result<(), MachineError> {
         let config = config::load_config_file()?;
-        let term_geometry = term.size();        // (rows, columns)
+        let term_geometry = term.size(); // (rows, columns)
         term.hide_cursor()?;
         term.move_cursor_to(0, 0)?;
         term.clear_line()?;
