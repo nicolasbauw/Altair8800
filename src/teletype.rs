@@ -58,11 +58,11 @@ impl Console {
         term: &console::Term,
         tx: &std::sync::mpsc::Sender<ConsoleMsg>,
     ) -> Result<(), MachineError> {
-        let term_width = term.size().1;
         let config = config::load_config_file()?;
+        let term_geometry = term.size();        // (rows, columns)
         term.move_cursor_to(0, 0)?;
-        term.clear_screen()?;
-        if term_width < 80 {
+        term.clear_line()?;
+        if term_geometry.1 < 80 {
             println!("Terminal < 80 columns ! Press ESC");
         } else {
             println!(
@@ -78,7 +78,9 @@ impl Console {
         loop {
             match term.read_key()? {
                 Key::Escape => {
-                    term.clear_screen().unwrap();
+                    term.move_cursor_to(0, 0)?;
+                    term.clear_line()?;
+                    term.move_cursor_to(0, 255)?;
                     return Ok(());
                 }
                 Key::Char('Q') => process::exit(0),
