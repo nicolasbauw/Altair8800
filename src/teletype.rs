@@ -107,17 +107,25 @@ impl Console {
                         tx.send(ConsoleMsg::Char(0x0d))?;
                         thread::sleep(std::time::Duration::from_millis(config.keyboard.line_delay));
                     }
+                    term.show_cursor()?;
                     return Ok(());
                 }
                 Key::Char('S') => {
+                    term.move_cursor_to(0, 255)?;
+                    term.show_cursor()?;
                     tx.send(ConsoleMsg::SaveSnap)?;
+                    return Ok(());
                 }
                 Key::Char('L') => {
+                    term.move_cursor_to(0, 255)?;
+                    term.show_cursor()?;
                     tx.send(ConsoleMsg::LoadSnap)?;
+                    return Ok(());
                 }
                 Key::Char('R') => {
                     tx.send(ConsoleMsg::ResetCpu)?;
-                    term.clear_screen().unwrap();
+                    term.clear_screen()?;
+                    term.show_cursor()?;
                     return Ok(());
                 }
                 _ => {}
