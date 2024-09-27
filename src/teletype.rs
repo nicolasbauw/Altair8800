@@ -1,6 +1,6 @@
 use crate::{config, MachineError};
 use console::{style, Key, Term};
-use std::{fs, process, thread};
+use std::{fs, thread};
 
 pub struct Teletype {
     pub control: u8, // Device 0
@@ -12,6 +12,7 @@ pub enum ConsoleMsg {
     LoadSnap,
     SaveSnap,
     ResetCpu,
+    Quit,
 }
 
 pub struct Console {}
@@ -83,7 +84,7 @@ impl Console {
                     term.move_cursor_to(0, 255)?;
                     return Ok(());
                 }
-                Key::Char('Q') => process::exit(0),
+                Key::Char('Q') => tx.send(ConsoleMsg::Quit)?,
                 Key::Char('A') => {
                     term.clear_screen()?;
                     term.write_line("File ? ")?;
