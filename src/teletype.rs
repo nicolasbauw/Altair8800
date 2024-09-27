@@ -30,6 +30,7 @@ impl Console {
     pub fn spawn(tx: std::sync::mpsc::Sender<ConsoleMsg>) {
         let term = Term::stdout();
         term.clear_screen().unwrap();
+        term.show_cursor().unwrap();
         // Since the console crate read key function is blocking, we spawn a thread
         thread::spawn(move || loop {
             if let Some(ch) = Console::getch(&term, &tx) {
@@ -61,6 +62,7 @@ impl Console {
     ) -> Result<(), MachineError> {
         let config = config::load_config_file()?;
         let term_geometry = term.size();        // (rows, columns)
+        term.hide_cursor()?;
         term.move_cursor_to(0, 0)?;
         term.clear_line()?;
         if term_geometry.1 < 80 {
@@ -82,9 +84,14 @@ impl Console {
                     term.move_cursor_to(0, 0)?;
                     term.clear_line()?;
                     term.move_cursor_to(0, 255)?;
+                    term.show_cursor()?;
                     return Ok(());
                 }
-                Key::Char('Q') => tx.send(ConsoleMsg::Quit)?,
+                Key::Char('Q') => {
+                    term.clear_screen()?;
+                    term.show_cursor()?;
+                    tx.send(ConsoleMsg::Quit)?;
+                }
                 Key::Char('A') => {
                     term.clear_screen()?;
                     term.write_line("File ? ")?;
