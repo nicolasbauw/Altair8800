@@ -48,7 +48,7 @@ impl Console {
                     if let Err(e) = Console::toggle_menu(term, tx) {
                         println!("{}", e)
                     };
-                    return None;
+                    None
                 }
                 _ => None,
             },

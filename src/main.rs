@@ -7,7 +7,7 @@ mod snapshot;
 mod teletype;
 
 fn main() -> ExitCode {
-    if let Err(_) = run() {
+    if run().is_err() {
         return ExitCode::from(1);
     }
     ExitCode::from(0)

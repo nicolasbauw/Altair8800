@@ -164,7 +164,7 @@ impl Machine {
                     let port = self.cpu.bus.read_byte(pc + 1);
                     if port == 0x01 {
                         let value = self.cpu.reg.a & 0x7f;
-                        if value >= 32 && value <= 125 || value == 0x0a || value == 0x0d {
+                        if (32..=125).contains(&value) || value == 0x0a || value == 0x0d {
                             print!("{}", value as char);
                             stdout().flush()?;
                         }
