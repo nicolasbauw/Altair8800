@@ -21,8 +21,6 @@ fn main() {
         let mut from_paths = Vec::new();
         from_paths.push("config/config.toml");
         println!("Copying {:#?} to {:#?}", from_paths, dest);
-        if copy_items(&from_paths, dest, &options).is_err() {
-            println!("teletype configuration file already exists");
-        }
+        copy_items(&from_paths, dest, &options).unwrap_or_default();
     }
 }
