@@ -13,11 +13,16 @@ fn main() {
 
         // Create teletype's config directory in user's home directory
         dest.push("teletype/");
-        create(&dest, true).unwrap();
+        if create(&dest, false).is_err() {
+            println!("teletype directory already exists");
+        }
 
         // Copy teletype/config.toml to home_dir/.config/teletype/config.toml
-        let from_paths = vec!["config/config.toml"];
+        let mut from_paths = Vec::new();
+        from_paths.push("config/config.toml");
         println!("Copying {:#?} to {:#?}", from_paths, dest);
-        copy_items(&from_paths, dest, &options).unwrap();
+        if copy_items(&from_paths, dest, &options).is_err() {
+            println!("teletype configuration file already exists");
+        }
     }
 }
