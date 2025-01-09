@@ -39,7 +39,7 @@ impl Console {
         });
     }
 
-    pub fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<ConsoleMsg>) -> Option<u8> {
+    fn getch(term: &console::Term, tx: &std::sync::mpsc::Sender<ConsoleMsg>) -> Option<u8> {
         match term.read_key() {
             Ok(k) => match k {
                 Key::Char(c) => Some(c as u8),
@@ -56,7 +56,7 @@ impl Console {
         }
     }
 
-    pub fn toggle_menu(
+    fn toggle_menu(
         term: &console::Term,
         tx: &std::sync::mpsc::Sender<ConsoleMsg>,
     ) -> Result<(), MachineError> {
