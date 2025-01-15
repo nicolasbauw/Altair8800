@@ -1,6 +1,5 @@
 use crate::teletype::Console;
 use crate::teletype::{ConsoleMsg, Teletype};
-use directories::UserDirs;
 use intel8080::cpu::CPU;
 use std::{
     error, fmt, io::stdout, io::Write, sync::mpsc, sync::mpsc::SendError, thread, time::Duration,
@@ -17,7 +16,7 @@ pub enum MachineError {
 
 impl fmt::Display for MachineError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("Machine error : ")?;
+        f.write_str("Machine error: ")?;
         f.write_str(match self {
             MachineError::ConfigFileFmt => "Bad config file format",
             MachineError::ConfigFile => "Can't load config file",
@@ -67,13 +66,7 @@ pub struct Machine {
 
 impl Machine {
     pub fn new() -> Result<Machine, MachineError> {
-        let Ok(config) = crate::config::load_config_file() else {
-            let user_dirs = UserDirs::new().ok_or(MachineError::ConfigFile)?;
-            let mut cfg = user_dirs.home_dir().to_path_buf();
-            cfg.push(".config/teletype/config.toml");
-            println!("Can't load config file {}", cfg.to_str().unwrap());
-            return Err(MachineError::ConfigFile);
-        };
+        let config = crate::config::load_config_file()?;
 
         Ok(Self {
             cpu: CPU::new(config.memory.ram),
